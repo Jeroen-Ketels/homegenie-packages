@@ -9,6 +9,7 @@ Program.AddOption("KnxLocalIp", "", "Local endpoint IP address (optional)", "tex
 Program.AddOption("KnxLocalPort","", "Local endpoint port (optional)", "text");
 Program.AddOption("KnxRemoteIp", "", "Remote endpoint IP address (optional)", "text");
 Program.AddOption("KnxRemotePort","", "Remote endpoint port (optional)", "text");
+Program.AddOption("KnxActionMessageCode","0x00", "Some KNX Routers/Interfaces might need this parameter defined, some of them need this to be 0x29.(optional)", "text");
 
 // Create 5 virtual modules with the domain "HomeAutomation.KNX" and with address from 1 to 5
 Program.AddVirtualModules(MODULES_DOMAIN, "Light", "", 1, 5);
@@ -23,6 +24,7 @@ var localIp = Program.Option("KnxLocalIp").Value;
 var localPort = (int)Program.Option("KnxLocalPort").DecimalValue;
 var remoteIp = Program.Option("KnxRemoteIp").Value;
 var remotePort = (int)Program.Option("KnxRemotePort").DecimalValue;
+var actionMessageCode = Program.Option("KnxActionMessageCode").Value;
 
 var knx = KnxClient;
 if (!String.IsNullOrWhiteSpace(localIp) &amp;&amp; !String.IsNullOrWhiteSpace(remoteIp))
@@ -42,7 +44,7 @@ else if (!String.IsNullOrWhiteSpace(localIp))
 }
 
 knx
-  .Connect()
+  .Connect(actionMessageCode)
   .OnStatusReceived((address, status)=&gt;{ 
     // TODO: should update virtual module parameters
     Program.Notify("KNX Status", "Device " + address + " -&gt; " + status);
